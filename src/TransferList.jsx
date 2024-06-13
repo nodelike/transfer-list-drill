@@ -36,12 +36,12 @@ function TransferList() {
     let newList1;
     let newList2;
     if (left) {
-      const checkedItems = Object.fromEntries(Object.entries(list2).filter(([key, value]) => value));
+      const checkedItems = Object.fromEntries(Object.entries(list2).filter(([key, value]) => value).map(([key,value]) => [key, false]));
       const nonCheckedItems = Object.fromEntries(Object.entries(list2).filter(([key, value]) => !value));
       newList1 = { ...list1, ...checkedItems };
       newList2 = nonCheckedItems;
     } else {
-      const checkedItems = Object.fromEntries(Object.entries(list1).filter(([key, value]) => value));
+      const checkedItems = Object.fromEntries(Object.entries(list1).filter(([key, value]) => value).map(([key,value]) => [key, false]));
       const nonCheckedItems = Object.fromEntries(Object.entries(list1).filter(([key, value]) => !value));
       newList1 = nonCheckedItems;
       newList2 = { ...list2, ...checkedItems };

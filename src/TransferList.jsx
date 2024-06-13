@@ -5,33 +5,16 @@ import { faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight } from '@fortawe
 function TransferList() {
   const [list1, setList1] = useState({ "React": false, "Angular": false, "Vue": false, "Svelte": false });
   const [list2, setList2] = useState({ "HTML": false, "CSS": false, "JS": false, "TS": false });
-  const [moveLeftBtn, setLeftBtn] = useState(true);
-  const [moveRightBtn, setRightBtn] = useState(true);
-
-  const updateButtonStates = (updatedList1, updatedList2) => {
-    const leftBtnState = !Object.values(updatedList2).some(value => value === true);
-    const rightBtnState = !Object.values(updatedList1).some(value => value === true);
-    setLeftBtn(leftBtnState);
-    setRightBtn(rightBtnState);
-  };
-
-  const updateCheckState = (list, ele, setFn, oppositeList) => {
-    const newList = { ...list, [ele]: !list[ele] };
-    setFn(newList);
-    updateButtonStates(newList, oppositeList);
-  };
 
   const transferAll = (left) => {
     if (left) {
       const newList1 = { ...list1, ...list2 };
       setList1(newList1);
       setList2({});
-      updateButtonStates(newList1, {});
     } else {
       const newList2 = { ...list2, ...list1 };
       setList1({});
       setList2(newList2);
-      updateButtonStates({}, newList2);
     }
   };
 
@@ -51,7 +34,10 @@ function TransferList() {
     }
     setList1(newList1);
     setList2(newList2);
-    updateButtonStates(newList1, newList2);
+  };
+
+  const anyCheckedInList = (list) => {
+    return Object.values(list).some(value => value === true);
   };
 
   return (
@@ -61,7 +47,8 @@ function TransferList() {
         <div className="w-full p-6">
           <ul className='list-none flex flex-col gap-4'>
             {Object.keys(list1).map((listItem) => (
-              <li className='text-base' key={listItem}><input checked={list1[listItem]} type="checkbox" className='mr-5' onChange={() => { updateCheckState(list1, listItem, setList1, list2) }}/>{listItem}</li>
+              <li className='text-base' key={listItem}>
+                <input checked={list1[listItem]} type="checkbox" className='mr-5' onChange={() => { setList1({ ...list1, [listItem]: !list1[listItem] }) }}/>{listItem}</li>
             ))}
           </ul>
         </div>
@@ -69,10 +56,10 @@ function TransferList() {
           <button className='grid place-content-center bg-gray-500 px-4 py-1 rounded-sm border-1 border-black text-white' onClick={() => { transferAll(true) }}>
             <FontAwesomeIcon icon={faAnglesLeft} />
           </button>
-          <button className='grid place-content-center bg-gray-500 px-4 py-1 rounded-sm border-1 border-black text-white disabled:bg-gray-200' disabled={moveLeftBtn} onClick={() => { shiftItem(true) }}>
+          <button className={`grid place-content-center bg-gray-500 px-4 py-1 rounded-sm border-1 border-black text-white ${anyCheckedInList(list2) ? '' : 'disabled:bg-gray-200'}`} disabled={!anyCheckedInList(list2)} onClick={() => { shiftItem(true) }}>
             <FontAwesomeIcon icon={faAngleLeft} />
           </button>
-          <button className='grid place-content-center bg-gray-500 px-4 py-1 rounded-sm border-1 border-black text-white disabled:bg-gray-200' disabled={moveRightBtn} onClick={() => { shiftItem(false) }}>
+          <button className={`grid place-content-center bg-gray-500 px-4 py-1 rounded-sm border-1 border-black text-white ${anyCheckedInList(list1) ? '' : 'disabled:bg-gray-200'}`} disabled={!anyCheckedInList(list1)} onClick={() => { shiftItem(false) }}>
             <FontAwesomeIcon icon={faAngleRight} />
           </button>
           <button className='grid place-content-center bg-gray-500 px-4 py-1 rounded-sm border-1 border-black text-white' onClick={() => { transferAll(false) }}>
@@ -82,7 +69,8 @@ function TransferList() {
         <div className="w-full p-6">
           <ul className='list-none flex flex-col gap-4'>
             {Object.keys(list2).map((listItem) => (
-              <li className='text-base' key={listItem}><input checked={list2[listItem]} type="checkbox" className='mr-5' onChange={() => { updateCheckState(list2, listItem, setList2, list1) }}/>{listItem}</li>
+              <li className='text-base' key={listItem}>
+                <input checked={list2[listItem]} type="checkbox" className='mr-5' onChange={() => { setList2({ ...list2, [listItem]: !list2[listItem] }) }}/>{listItem}</li>
             ))}
           </ul>
         </div>
